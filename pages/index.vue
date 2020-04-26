@@ -1,21 +1,21 @@
 <template>
   <b-container class="flex-column">
     <b-row class="mb-4">
-      <b-col>
+      <b-col class="text-center">
         <h3>রমজানের সময়সূচী ২০২০(হিজরি ১৪৪১)</h3>
         <h4>ঢাকা বিভাগ</h4>
-        <h4 class="font-bold">{{ date }}</h4>
+        <TimeComponent class="font-bold" />
       </b-col>
     </b-row>
-    <b-row class="mb-4">
-      <b-col>
+    <b-row class="mb-4 justify-content-center">
+      <b-col class="justify-content-center">
         <b-card
           :title="seheriLabel"
           :img-src="sunrise"
           img-alt="Image"
           img-top
           tag="article"
-          style="max-width: 20rem; min-width: 15rem"
+          style="max-width: 20rem; min-width: 15rem; margin: 0 auto;"
           class="mb-2"
         >
           <b-card-text v-if="todaysRamadanTime">
@@ -23,14 +23,14 @@
           </b-card-text>
         </b-card>
       </b-col>
-      <b-col>
+      <b-col class="justify-content-center">
         <b-card
           :title="iftarLabel"
           :img-src="sunset"
           img-alt="Image"
           img-top
           tag="article"
-          style="max-width: 20rem; min-width: 15rem"
+          style="max-width: 20rem; min-width: 15rem; margin: 0 auto;"
           class="mb-2"
         >
           <b-card-text v-if="todaysRamadanTime">
@@ -39,45 +39,43 @@
         </b-card>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="justify-content-center text-center">
       <b-col>
-        <h3 class="pb-4">রমজানের ইফতারি ও সাহ্‌রির সময় সূচি</h3>
-        <table class="table b-table table-striped table-hover">
-          <thead class="border">
-            <th class="px-4 py-2 border">Ramdan</th>
-            <th class="px-4 py-2 border">Date</th>
-            <th class="px-4 py-2 border">Day</th>
-            <th class="px-4 py-2 border">Seheri</th>
-            <th class="px-4 py-2 border">Iftar</th>
-          </thead>
-          <tbody>
-            <tr v-for="(time, index) in rahmatDays" :key="index">
-              <td class="border px-4 py-2">{{ time.ramadan }}</td>
-              <td class="border px-4 py-2">{{ time.date }}</td>
-              <td class="border px-4 py-2">{{ time.day }}</td>
-              <td class="border px-4 py-2">{{ time.suhoor }}</td>
-              <td class="border px-4 py-2">{{ time.iftar }}</td>
-            </tr>
-          </tbody>
-          <tbody>
-            <tr v-for="(time, index) in maghfiratDatys" :key="index">
-              <td class="border px-4 py-2">{{ time.ramadan }}</td>
-              <td class="border px-4 py-2">{{ time.date }}</td>
-              <td class="border px-4 py-2">{{ time.day }}</td>
-              <td class="border px-4 py-2">{{ time.suhoor }}</td>
-              <td class="border px-4 py-2">{{ time.iftar }}</td>
-            </tr>
-          </tbody>
-          <tbody>
-            <tr v-for="(time, index) in nazatDays" :key="index">
-              <td class="border px-4 py-2">{{ time.ramadan }}</td>
-              <td class="border px-4 py-2">{{ time.date }}</td>
-              <td class="border px-4 py-2">{{ time.day }}</td>
-              <td class="border px-4 py-2">{{ time.suhoor }}</td>
-              <td class="border px-4 py-2">{{ time.iftar }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <h3 class="pb-2">রমজানের ইফতারি ও সাহ্‌রির সময় সূচি</h3>
+        <div class="pb-4 table-filter">
+          <b-badge
+            href="#"
+            :variant="selectedCalender === 'rahmat' ? 'primary' : 'secondary'"
+            @click.prevent="setCalender('rahmat')"
+            >রহমত</b-badge
+          >
+          <b-badge
+            href="#"
+            :variant="selectedCalender === 'magfirat' ? 'primary' : 'secondary'"
+            @click.prevent="setCalender('magfirat')"
+            >মাগফিরাত</b-badge
+          >
+          <b-badge
+            href="#"
+            :variant="selectedCalender === 'nazat' ? 'primary' : 'secondary'"
+            @click.prevent="setCalender('nazat')"
+            >নাজাত</b-badge
+          >
+          <b-badge
+            href="#"
+            :variant="selectedCalender === '' ? 'primary' : 'secondary'"
+            @click.prevent="setCalender('')"
+            >সম্পূর্ণ সময়সূচী</b-badge
+          >
+        </div>
+        <div>
+          <b-table
+            :items="calenderToDisplay"
+            stacked="md"
+            :fields="tableFields"
+            :tbody-tr-class="rowClass"
+          ></b-table>
+        </div>
       </b-col>
     </b-row>
   </b-container>
@@ -88,8 +86,12 @@ import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
 // import moment from 'moment'
 import sunrise from '@/assets/wi-sunrise.svg'
 import sunset from '@/assets/wi-sunset.svg'
+import TimeComponent from '@/components/TimeComponent'
 export default {
   name: 'IndexPage',
+  components: {
+    TimeComponent
+  },
   data() {
     return {
       ramadanTime: [],
@@ -99,13 +101,34 @@ export default {
       seheriTime: null,
       todaysRamadanTime: null,
       seheriLabel: '',
-      iftarLabel: ''
+      iftarLabel: '',
+      selectedCalender: 'rahmat',
+      displayType: 'card',
+      tableFields: [
+        {
+          key: 'ramadan',
+          label: 'রমজান'
+        },
+        {
+          key: 'date',
+          label: 'তারিখ'
+        },
+        {
+          key: 'day',
+          label: 'বার'
+        },
+        {
+          key: 'suhoor',
+          label: 'সাহ্‌রি'
+        },
+        {
+          key: 'iftar',
+          label: 'ইফতার'
+        }
+      ]
     }
   },
   computed: {
-    date() {
-      return new Date().toLocaleString('bn-BD')
-    },
     seheriDateTime() {
       if (this.todaysRamadanTime) {
         return `${this.todaysRamadanTime.date} ${this.todaysRamadanTime.suhoor}`
@@ -121,11 +144,17 @@ export default {
     rahmatDays() {
       return this.ramadanTime.slice(0, 10)
     },
-    maghfiratDatys() {
+    magfiratDatys() {
       return this.ramadanTime.slice(10, 20)
     },
     nazatDays() {
       return this.ramadanTime.slice(20)
+    },
+    calenderToDisplay() {
+      if (this.selectedCalender === 'rahmat') return this.rahmatDays
+      if (this.selectedCalender === 'magfirat') return this.magfiratDatys
+      if (this.selectedCalender === 'nazat') return this.nazatDays
+      return this.ramadanTime
     }
   },
   created() {
@@ -194,40 +223,30 @@ export default {
         this.iftarTime = iftar
         this.iftarLabel = 'আজকে ইফতার'
       }
+    },
+    isEven(num) {
+      return num % 2 === 0
+    },
+    isActiveDate(date) {
+      if (!this.todaysRamadanTime) return false
+      return this.todaysRamadanTime.date === date
+    },
+    setCalender(type) {
+      this.selectedCalender = type
+    },
+    rowClass(item) {
+      const itemIndex = this.ramadanTime.findIndex((ramadanObject) => {
+        return ramadanObject.date === item.date
+      })
+
+      if (this.isActiveDate(item.date)) {
+        return 'active'
+      }
+      if (this.isEven(itemIndex)) {
+        return 'table-primary'
+      }
+      return ''
     }
   }
 }
 </script>
-
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
