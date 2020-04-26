@@ -2,14 +2,15 @@
   <b-container class="flex-column">
     <b-row class="mb-4">
       <b-col>
-        <h6>Ramadan Time Table 2020, Hijri 1441 For Dhaka District</h6>
+        <h3>রমজানের সময়সূচী ২০২০(হিজরি ১৪৪১)</h3>
+        <h4>ঢাকা বিভাগ</h4>
         <h4 class="font-bold">{{ date }}</h4>
       </b-col>
     </b-row>
     <b-row class="mb-4">
       <b-col>
         <b-card
-          title="আজকে সেহেরি"
+          :title="seheriLabel"
           :img-src="sunrise"
           img-alt="Image"
           img-top
@@ -18,13 +19,13 @@
           class="mb-2"
         >
           <b-card-text v-if="todaysRamadanTime">
-            {{ todaysRamadanTime.suhoor }}
+            {{ seheriTime }}
           </b-card-text>
         </b-card>
       </b-col>
       <b-col>
         <b-card
-          title="আজকে ইফতার"
+          :title="iftarLabel"
           :img-src="sunset"
           img-alt="Image"
           img-top
@@ -33,15 +34,15 @@
           class="mb-2"
         >
           <b-card-text v-if="todaysRamadanTime">
-            {{ todaysRamadanTime.iftar }}
+            {{ iftarTime }}
           </b-card-text>
         </b-card>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <h3 class="pb-4">রমজানের ইফতারি ও সেহেরির সময় সূচি</h3>
-        <table class="table">
+        <h3 class="pb-4">রমজানের ইফতারি ও সাহ্‌রির সময় সূচি</h3>
+        <table class="table b-table table-striped table-hover">
           <thead class="border">
             <th class="px-4 py-2 border">Ramdan</th>
             <th class="px-4 py-2 border">Date</th>
@@ -50,7 +51,25 @@
             <th class="px-4 py-2 border">Iftar</th>
           </thead>
           <tbody>
-            <tr v-for="(time, index) in ramadanTime" :key="index">
+            <tr v-for="(time, index) in rahmatDays" :key="index">
+              <td class="border px-4 py-2">{{ time.ramadan }}</td>
+              <td class="border px-4 py-2">{{ time.date }}</td>
+              <td class="border px-4 py-2">{{ time.day }}</td>
+              <td class="border px-4 py-2">{{ time.suhoor }}</td>
+              <td class="border px-4 py-2">{{ time.iftar }}</td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr v-for="(time, index) in maghfiratDatys" :key="index">
+              <td class="border px-4 py-2">{{ time.ramadan }}</td>
+              <td class="border px-4 py-2">{{ time.date }}</td>
+              <td class="border px-4 py-2">{{ time.day }}</td>
+              <td class="border px-4 py-2">{{ time.suhoor }}</td>
+              <td class="border px-4 py-2">{{ time.iftar }}</td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr v-for="(time, index) in nazatDays" :key="index">
               <td class="border px-4 py-2">{{ time.ramadan }}</td>
               <td class="border px-4 py-2">{{ time.date }}</td>
               <td class="border px-4 py-2">{{ time.day }}</td>
@@ -66,7 +85,7 @@
 
 <script>
 import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
-import moment from 'moment'
+// import moment from 'moment'
 import sunrise from '@/assets/wi-sunrise.svg'
 import sunset from '@/assets/wi-sunset.svg'
 export default {
@@ -78,33 +97,44 @@ export default {
       sunset,
       iftarTime: null,
       seheriTime: null,
-      todaysRamadanTime: null
+      todaysRamadanTime: null,
+      seheriLabel: '',
+      iftarLabel: ''
     }
   },
   computed: {
     date() {
       return new Date().toLocaleString('bn-BD')
     },
-    seheriTitle() {
-      const today = new Date()
-      const todaysRamadanTime = this.todaysRamadanTime
-      const ramadanDateTime = `${todaysRamadanTime.date} ${todaysRamadanTime.suhoor}`
-      console.log(today)
-      console.log(moment(ramadanDateTime))
-      return ramadanDateTime
+    seheriDateTime() {
+      if (this.todaysRamadanTime) {
+        return `${this.todaysRamadanTime.date} ${this.todaysRamadanTime.suhoor}`
+      }
+      return undefined
     },
-    iftarTitle() {
-      const today = new Date()
-      const todaysRamadanTime = this.todaysRamadanTime
-      const ramadanDateTime = `${todaysRamadanTime.date} ${todaysRamadanTime.iftar}`
-      console.log(today)
-      console.log(moment(ramadanDateTime))
-      return ramadanDateTime
+    iftarDateTime() {
+      if (this.todaysRamadanTime) {
+        return `${this.todaysRamadanTime.date} ${this.todaysRamadanTime.iftar}`
+      }
+      return undefined
+    },
+    rahmatDays() {
+      return this.ramadanTime.slice(0, 10)
+    },
+    maghfiratDatys() {
+      return this.ramadanTime.slice(10, 20)
+    },
+    nazatDays() {
+      return this.ramadanTime.slice(20)
     }
   },
   created() {
     this.initRamadanTime().then(() => {
-      this.getTodaysRamadanTime()
+      this.initTodaysRamadanTime()
+      this.$nextTick(() => {
+        this.initSeheriTime()
+        this.initIftarTime()
+      })
     })
   },
   methods: {
@@ -115,17 +145,55 @@ export default {
         this.ramadanTime = sheet.data
       })
     },
-    getTodaysRamadanTime() {
-      const today = new Date().toLocaleDateString()
+    initTodaysRamadanTime() {
+      const today = new Date()
+      this.todaysRamadanTime = this.getRamadanTime(today)
+      return this.todaysRamadanTime
+    },
+    getRamadanTime(date) {
+      const ramadanDate = new Date(date).toLocaleDateString()
       const ramadanTime = this.ramadanTime.find((timeObject) => {
-        return new Date(timeObject.date).toLocaleDateString() === today
+        return new Date(timeObject.date).toLocaleDateString() === ramadanDate
       })
-      this.todaysRamadanTime = ramadanTime
       return ramadanTime
     },
     initSeheriTime() {
-      const ramadanDateTime = this.todaysRamadanTime
-      console.log(ramadanDateTime)
+      const ramadanDateTime = this.seheriDateTime
+      const seheriTime = new Date(ramadanDateTime).getTime()
+      const currentTime = new Date().getTime()
+      if (currentTime > seheriTime) {
+        const today = new Date()
+        const tomorrow = new Date(today)
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        const tomorrowsRamadanTime = this.getRamadanTime(tomorrow)
+        const { suhoor } = tomorrowsRamadanTime
+        this.seheriTime = suhoor
+        this.seheriLabel = 'আগামীকাল সাহ্‌রি'
+      } else {
+        const todaysRamadanTime = this.getRamadanTime(new Date())
+        const { suhoor } = todaysRamadanTime
+        this.seheriTime = suhoor
+        this.seheriLabel = 'আজকে সাহ্‌রি'
+      }
+    },
+    initIftarTime() {
+      const ramadanDateTime = this.iftarDateTime
+      const iftarTime = new Date(ramadanDateTime).getTime()
+      const currentTime = new Date().getTime()
+      if (currentTime > iftarTime) {
+        const today = new Date()
+        const tomorrow = new Date(today)
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        const tomorrowsRamadanTime = this.getRamadanTime(tomorrow)
+        const { iftar } = tomorrowsRamadanTime
+        this.iftarTime = iftar
+        this.iftarLabel = 'আগামীকাল ইফতার'
+      } else {
+        const todaysRamadanTime = this.getRamadanTime(new Date())
+        const { iftar } = todaysRamadanTime
+        this.iftarTime = iftar
+        this.iftarLabel = 'আজকে ইফতার'
+      }
     }
   }
 }
