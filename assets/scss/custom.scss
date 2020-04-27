@@ -13,17 +13,6 @@ table .active {
       color: #fff !important;
   }
 }
-.web-link {
-    text-decoration: none;
-    &:hover {
-      text-decoration: none;
-    }
-  }
-  .customAlert {
-    background-color: #004d46;
-    cursor: pointer;
-    text-align: center;
-  }
 .table-filter{
     font-size: 1.5rem;
     .badge{
@@ -31,3 +20,39 @@ table .active {
         border-radius: 0;
     }
 }  
+.ramadan-cards{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    @media all and (min-width: 768px){
+        flex-direction: row;
+    }
+}
+.ramadan-card{
+    min-width: 20rem;
+    margin-right: 1rem;
+    .card-text{
+        font-size: 1.5rem;
+    }
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 50px;
+    &--seheri{
+        background-image: url('/wi-sunrise.svg');
+    }
+    &--iftar{
+        background-image: url('/wi-sunset.svg');
+    }
+}
+
+.under-header-content{
+    background-color: #1b1b32;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 10px;
+    min-height: 80px;
+    text-align: center;
+    color: #fff;
+}

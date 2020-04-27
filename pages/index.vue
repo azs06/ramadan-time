@@ -1,42 +1,41 @@
 <template>
-  <b-container class="flex-column">
+  <b-container class="flex-column mt-4">
     <b-row class="mb-4">
       <b-col class="text-center">
-        <h3>রমজানের সময়সূচী ২০২০(হিজরি ১৪৪১)</h3>
         <h4>ঢাকা বিভাগ</h4>
         <TimeComponent class="font-bold" />
       </b-col>
     </b-row>
     <b-row class="mb-4 justify-content-center">
       <b-col class="justify-content-center">
-        <b-card
-          :title="seheriLabel"
-          :img-src="sunrise"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 20rem; min-width: 15rem; margin: 0 auto;"
-          class="mb-2"
-        >
-          <b-card-text v-if="todaysRamadanTime">
-            {{ seheriTime }}
-          </b-card-text>
-        </b-card>
-      </b-col>
-      <b-col class="justify-content-center">
-        <b-card
-          :title="iftarLabel"
-          :img-src="sunset"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 20rem; min-width: 15rem; margin: 0 auto;"
-          class="mb-2"
-        >
-          <b-card-text v-if="todaysRamadanTime">
-            {{ iftarTime }}
-          </b-card-text>
-        </b-card>
+        <div class="ramadan-cards">
+          <b-card
+            :title="seheriLabel"
+            img-alt="Image"
+            img-top
+            border-variant="primary"
+            header-bg-variant="primary"
+            header-text-variant="white"
+            tag="article"
+            class="mb-2 ramadan-card ramadan-card--seheri"
+          >
+            <b-card-text v-if="todaysRamadanTime">
+              {{ seheriTime }}
+            </b-card-text>
+          </b-card>
+          <b-card
+            :title="iftarLabel"
+            border-variant="primary"
+            header-bg-variant="primary"
+            header-text-variant="white"
+            tag="article"
+            class="mb-2 ramadan-card ramadan-card--iftar"
+          >
+            <b-card-text v-if="todaysRamadanTime">
+              {{ iftarTime }}
+            </b-card-text>
+          </b-card>
+        </div>
       </b-col>
     </b-row>
     <b-row class="justify-content-center text-center">
@@ -87,6 +86,7 @@ import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
 import sunrise from '@/assets/wi-sunrise.svg'
 import sunset from '@/assets/wi-sunset.svg'
 import TimeComponent from '@/components/TimeComponent'
+// import RamadanCard from '@/components/RamadanCard'
 export default {
   name: 'IndexPage',
   components: {
@@ -155,6 +155,13 @@ export default {
       if (this.selectedCalender === 'magfirat') return this.magfiratDatys
       if (this.selectedCalender === 'nazat') return this.nazatDays
       return this.ramadanTime
+    },
+    cardHeader() {
+      return this.todaysRamadanTime
+        ? Number(this.todaysRamadanTime.ramadan)
+            .toLocaleString('bn')
+            .padStart(2, '০') + ' রমজান'
+        : ''
     }
   },
   created() {
@@ -243,7 +250,7 @@ export default {
         return 'active'
       }
       if (this.isEven(itemIndex)) {
-        return 'table-primary'
+        return 'table-secondary'
       }
       return ''
     }

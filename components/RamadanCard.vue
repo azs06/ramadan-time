@@ -1,19 +1,33 @@
 <template>
-  <b-card title="Ramadan 01" sub-title="Card subtitle">
-    <b-card-text>
-      Some quick example text to build on the <em>card title</em> and make up
-      the bulk of the card's content.
+  <b-card
+    :title="title"
+    border-variant="primary"
+    header-bg-variant="primary"
+    header-text-variant="white"
+    tag="article"
+    class="mb-2 ramadan-card"
+  >
+    <b-card-text v-if="time">
+      {{ time }}
     </b-card-text>
-
-    <b-card-text>A second paragraph of text in the card.</b-card-text>
-
-    <a href="#" class="card-link">Card link</a>
-    <b-link href="#" class="card-link">Another link</b-link>
   </b-card>
 </template>
 
 <script>
 export default {
-  props: ['ramadanObject']
+  props: {
+    time: {
+      type: String
+    },
+    title: {
+      type: String
+    }
+  }
 }
 </script>
+<style lang="scss" scoped>
+.ramadan-card {
+  max-width: 20rem;
+  width: 15rem;
+}
+</style>

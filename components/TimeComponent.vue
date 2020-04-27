@@ -1,11 +1,21 @@
 <template>
   <div>
-    {{ date }}
+    <h5>{{ date }}</h5>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    prefix: {
+      type: String,
+      default: ''
+    },
+    suffix: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       date: null

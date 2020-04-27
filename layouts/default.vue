@@ -1,6 +1,9 @@
 <template>
   <main class="main-body">
-    <div class="content-body mt-4">
+    <div class="content-body">
+      <div class="under-header-content mb-4 bg-primary">
+        <h3>রমজানের সময়সূচী ২০২০(হিজরি ১৪৪১)</h3>
+      </div>
       <nuxt />
     </div>
   </main>
