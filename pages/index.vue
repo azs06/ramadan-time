@@ -67,7 +67,7 @@
             >সম্পূর্ণ সময়সূচী</b-badge
           >
         </div>
-        <div>
+        <div class="card">
           <b-table
             :items="calenderToDisplay"
             stacked="md"
@@ -83,8 +83,6 @@
 <script>
 import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
 // import moment from 'moment'
-import sunrise from '@/assets/wi-sunrise.svg'
-import sunset from '@/assets/wi-sunset.svg'
 import TimeComponent from '@/components/TimeComponent'
 // import RamadanCard from '@/components/RamadanCard'
 export default {
@@ -95,8 +93,6 @@ export default {
   data() {
     return {
       ramadanTime: [],
-      sunrise,
-      sunset,
       iftarTime: null,
       seheriTime: null,
       todaysRamadanTime: null,
