@@ -16,20 +16,24 @@
     <b-row class="mb-4 justify-content-center">
       <b-col class="justify-content-center">
         <div class="ramadan-cards">
-          <RamadanCard
-            :title="seheriLabel"
-            :time="seheriTime"
-            class="ramadan-card--seheri"
-          >
-            <CountDownTimer :destination-time="seheriDateTime" />
-          </RamadanCard>
-          <RamadanCard
-            :title="iftarLabel"
-            :time="iftarTime"
-            class="ramadan-card--iftar"
-          >
-            <CountDownTimer :destination-time="iftarDateTime" />
-          </RamadanCard>
+          <b-overlay :show="isLoading" rounded="sm">
+            <RamadanCard
+              :title="seheriLabel"
+              :time="seheriTime"
+              class="ramadan-card--seheri"
+            >
+              <CountDownTimer :destination-time="seheriDateTime" />
+            </RamadanCard>
+          </b-overlay>
+          <b-overlay :show="isLoading" rounded="sm">
+            <RamadanCard
+              :title="iftarLabel"
+              :time="iftarTime"
+              class="ramadan-card--iftar"
+            >
+              <CountDownTimer :destination-time="iftarDateTime" />
+            </RamadanCard>
+          </b-overlay>
         </div>
       </b-col>
     </b-row>
@@ -122,7 +126,8 @@ export default {
       ],
       districts: [],
       selectedDistrict: 'Dhaka District',
-      sheetId: '1VueNvU-ipyjDhvKsU19nNlHkz70k6i5u5Rlnyz-TmE8'
+      sheetId: '1VueNvU-ipyjDhvKsU19nNlHkz70k6i5u5Rlnyz-TmE8',
+      isLoading: false
     }
   },
   computed: {
@@ -171,12 +176,14 @@ export default {
     }
   },
   created() {
+    this.isLoading = true
     this.initRamadanTime().then(() => {
       this.initDistricts()
       this.initTodaysRamadanTime()
       this.$nextTick(() => {
         this.initSeheriTime()
         this.initIftarTime()
+        this.isLoading = false
       })
     })
   },
@@ -290,6 +297,7 @@ export default {
         return objectToUpdate
       })
       this.initRamadanTime()
+      this.initTodaysRamadanTime()
       this.initSeheriTime()
       this.initIftarTime()
     }
