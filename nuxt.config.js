@@ -12,7 +12,11 @@ export default {
         hid: 'description',
         name: 'description',
         content: process.env.npm_package_description || ''
-      }
+      },
+      { name: 'author', content: 'ramadan.surge.sh' },
+      { name: 'og:image', content: 'calender.png' },
+      { name: 'og:image:type', content: 'image/png/jpg' },
+      { name: 'og:description', content: 'Ramadan Calender Bangladesh' }
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/calender.png' }]
   },
