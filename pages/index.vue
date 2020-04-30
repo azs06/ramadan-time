@@ -9,32 +9,20 @@
     <b-row class="mb-4 justify-content-center">
       <b-col class="justify-content-center">
         <div class="ramadan-cards">
-          <b-card
+          <RamadanCard
             :title="seheriLabel"
-            img-alt="Image"
-            img-top
-            border-variant="primary"
-            header-bg-variant="primary"
-            header-text-variant="white"
-            tag="article"
-            class="mb-2 ramadan-card ramadan-card--seheri"
+            :time="seheriTime"
+            class="ramadan-card--seheri"
           >
-            <b-card-text v-if="todaysRamadanTime">
-              {{ seheriTime }}
-            </b-card-text>
-          </b-card>
-          <b-card
+            <CountDownTimer :destination-time="seheriDateTime" />
+          </RamadanCard>
+          <RamadanCard
             :title="iftarLabel"
-            border-variant="primary"
-            header-bg-variant="primary"
-            header-text-variant="white"
-            tag="article"
-            class="mb-2 ramadan-card ramadan-card--iftar"
+            :time="iftarTime"
+            class="ramadan-card--iftar"
           >
-            <b-card-text v-if="todaysRamadanTime">
-              {{ iftarTime }}
-            </b-card-text>
-          </b-card>
+            <CountDownTimer :destination-time="iftarDateTime" />
+          </RamadanCard>
         </div>
       </b-col>
     </b-row>
@@ -84,11 +72,14 @@
 import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
 // import moment from 'moment'
 import TimeComponent from '@/components/TimeComponent'
-// import RamadanCard from '@/components/RamadanCard'
+import RamadanCard from '@/components/RamadanCard'
+import CountDownTimer from '@/components/CountDownTimer'
 export default {
   name: 'IndexPage',
   components: {
-    TimeComponent
+    TimeComponent,
+    RamadanCard,
+    CountDownTimer
   },
   data() {
     return {
@@ -189,39 +180,52 @@ export default {
       })
       return ramadanTime
     },
-    initSeheriTime() {
-      const ramadanDateTime = this.seheriDateTime
-      const seheriTime = new Date(ramadanDateTime).getTime()
+    getComparisonTimes(time) {
+      const ramadanTime = new Date(time).getTime()
       const currentTime = new Date().getTime()
-      if (currentTime > seheriTime) {
-        const today = new Date()
-        const tomorrow = new Date(today)
-        tomorrow.setDate(tomorrow.getDate() + 1)
+      const today = new Date()
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      return {
+        ramadanTime,
+        currentTime,
+        tomorrow,
+        today
+      }
+    },
+    initSeheriTime() {
+      const {
+        ramadanTime,
+        currentTime,
+        tomorrow,
+        today
+      } = this.getComparisonTimes(this.seheriDateTime)
+      if (currentTime > ramadanTime) {
         const tomorrowsRamadanTime = this.getRamadanTime(tomorrow)
         const { suhoor } = tomorrowsRamadanTime
         this.seheriTime = suhoor
         this.seheriLabel = 'আগামীকাল সাহ্‌রি'
       } else {
-        const todaysRamadanTime = this.getRamadanTime(new Date())
+        const todaysRamadanTime = this.getRamadanTime(today)
         const { suhoor } = todaysRamadanTime
         this.seheriTime = suhoor
         this.seheriLabel = 'আজকে সাহ্‌রি'
       }
     },
     initIftarTime() {
-      const ramadanDateTime = this.iftarDateTime
-      const iftarTime = new Date(ramadanDateTime).getTime()
-      const currentTime = new Date().getTime()
-      if (currentTime > iftarTime) {
-        const today = new Date()
-        const tomorrow = new Date(today)
-        tomorrow.setDate(tomorrow.getDate() + 1)
+      const {
+        ramadanTime,
+        currentTime,
+        tomorrow,
+        today
+      } = this.getComparisonTimes(this.iftarDateTime)
+      if (currentTime > ramadanTime) {
         const tomorrowsRamadanTime = this.getRamadanTime(tomorrow)
         const { iftar } = tomorrowsRamadanTime
         this.iftarTime = iftar
         this.iftarLabel = 'আগামীকাল ইফতার'
       } else {
-        const todaysRamadanTime = this.getRamadanTime(new Date())
+        const todaysRamadanTime = this.getRamadanTime(today)
         const { iftar } = todaysRamadanTime
         this.iftarTime = iftar
         this.iftarLabel = 'আজকে ইফতার'
