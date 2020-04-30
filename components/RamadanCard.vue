@@ -8,14 +8,11 @@
     header-text-variant="white"
     tag="article"
     class="mb-2 ramadan-card"
-    no-body
   >
-    <b-card-body>
-      <b-card-text v-if="time">
-        {{ time }}
-        <slot></slot>
-      </b-card-text>
-    </b-card-body>
+    <b-card-text v-if="time">
+      {{ time }}
+      <slot></slot>
+    </b-card-text>
   </b-card>
 </template>
 

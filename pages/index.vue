@@ -22,7 +22,7 @@
               :time="seheriTime"
               class="ramadan-card--seheri"
             >
-              <CountDownTimer :destination-time="seheriDateTime" />
+              <CountDownTimer :destination-time="seheriTimerDateTime" />
             </RamadanCard>
           </b-overlay>
           <b-overlay :show="isLoading" rounded="sm">
@@ -127,7 +127,8 @@ export default {
       districts: [],
       selectedDistrict: 'Dhaka District',
       sheetId: '1VueNvU-ipyjDhvKsU19nNlHkz70k6i5u5Rlnyz-TmE8',
-      isLoading: false
+      isLoading: false,
+      seheriTimerDateTime: ''
     }
   },
   computed: {
@@ -234,11 +235,17 @@ export default {
         const tomorrowsRamadanTime = this.getRamadanTime(tomorrow)
         const { suhoor } = tomorrowsRamadanTime
         this.seheriTime = suhoor
+        this.seheriTimerDateTime = `${tomorrow.toLocaleDateString(
+          'en-US'
+        )} ${suhoor}`
         this.seheriLabel = 'আগামীকাল সাহ্‌রি'
       } else {
         const todaysRamadanTime = this.getRamadanTime(today)
         const { suhoor } = todaysRamadanTime
         this.seheriTime = suhoor
+        this.seheriTimerDateTime = `${today.toLocaleDateString(
+          'en-US'
+        )} ${suhoor}`
         this.seheriLabel = 'আজকে সাহ্‌রি'
       }
     },
