@@ -1,8 +1,15 @@
 <template>
   <b-container class="flex-column mt-4">
-    <b-row class="mb-4">
-      <b-col class="text-center">
-        <h4>ঢাকা বিভাগ</h4>
+    <b-row class="mb-4 justify-content-center">
+      <b-col class="text-center" cols="12" sm="4">
+        <b-form-select
+          v-model="selectedDistrict"
+          :options="districts"
+          value-field="district"
+          text-field="bengali"
+          class="mb-4"
+          @change="onChangeDistrict"
+        ></b-form-select>
         <TimeComponent class="font-bold" />
       </b-col>
     </b-row>
@@ -70,7 +77,7 @@
 
 <script>
 import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
-// import moment from 'moment'
+import moment from 'moment'
 import TimeComponent from '@/components/TimeComponent'
 import RamadanCard from '@/components/RamadanCard'
 import CountDownTimer from '@/components/CountDownTimer'
@@ -112,7 +119,10 @@ export default {
           key: 'iftar',
           label: 'ইফতার'
         }
-      ]
+      ],
+      districts: [],
+      selectedDistrict: 'Dhaka District',
+      sheetId: '1VueNvU-ipyjDhvKsU19nNlHkz70k6i5u5Rlnyz-TmE8'
     }
   },
   computed: {
@@ -149,10 +159,20 @@ export default {
             .toLocaleString('bn')
             .padStart(2, '০') + ' রমজান'
         : ''
+    },
+    selectedDistrictData() {
+      const selected = this.selectedDistrict
+      if (selected) {
+        return this.districts.find(
+          (districtObject) => districtObject.district === selected
+        )
+      }
+      return Object.create(null)
     }
   },
   created() {
     this.initRamadanTime().then(() => {
+      this.initDistricts()
       this.initTodaysRamadanTime()
       this.$nextTick(() => {
         this.initSeheriTime()
@@ -162,10 +182,13 @@ export default {
   },
   methods: {
     initRamadanTime() {
-      return GetSheetDone.labeledCols(
-        '1VueNvU-ipyjDhvKsU19nNlHkz70k6i5u5Rlnyz-TmE8'
-      ).then((sheet) => {
+      return GetSheetDone.labeledCols(this.sheetId).then((sheet) => {
         this.ramadanTime = sheet.data
+      })
+    },
+    initDistricts() {
+      return GetSheetDone.labeledCols(this.sheetId, 2).then((sheet) => {
+        this.districts = sheet.data
       })
     },
     initTodaysRamadanTime() {
@@ -253,6 +276,22 @@ export default {
         return 'table-secondary'
       }
       return ''
+    },
+    onChangeDistrict(value) {
+      const { suhoor, iftar } = this.selectedDistrictData
+      this.ramadanTime = this.ramadanTime.map((ramadanObject) => {
+        const objectToUpdate = JSON.parse(JSON.stringify(ramadanObject))
+        objectToUpdate.suhoor = moment(ramadanObject.suhoor, 'h:mm:ss A')
+          .add(Number(suhoor), 'minutes')
+          .format('LT')
+        objectToUpdate.iftar = moment(ramadanObject.iftar, 'h:mm:ss A')
+          .add(Number(iftar), 'minutes')
+          .format('LT')
+        return objectToUpdate
+      })
+      this.initRamadanTime()
+      this.initSeheriTime()
+      this.initIftarTime()
     }
   }
 }
