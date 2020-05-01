@@ -140,7 +140,9 @@ export default {
         }
       ],
       districts: [],
-      selectedDistrict: 'Dhaka District',
+      selectedDistrict: localStorage.getItem('selectedDistrict')
+        ? localStorage.getItem('selectedDistrict')
+        : 'Dhaka District',
       sheetId: '1VueNvU-ipyjDhvKsU19nNlHkz70k6i5u5Rlnyz-TmE8',
       isLoading: false,
       seheriTimerDateTime: '',
@@ -308,6 +310,7 @@ export default {
       return ''
     },
     onChangeDistrict(value) {
+      localStorage.setItem('selectedDistrict', value)
       const { suhoor, iftar } = this.selectedDistrictData
       this.ramadanTime = this.ramadanTime.map((ramadanObject) => {
         const objectToUpdate = JSON.parse(JSON.stringify(ramadanObject))
