@@ -16,7 +16,7 @@ export default {
       { name: 'author', content: 'ramadan.surge.sh' },
       { name: 'og:image', content: 'calendar.png' },
       { name: 'og:image:type', content: 'image/png/jpg' },
-      { name: 'og:description', content: 'Ramadan Calender Bangladesh' }
+      { name: 'og:description', content: 'Ramadan Calendar Bangladesh' }
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/calendar.png' }]
   },
