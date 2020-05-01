@@ -39,6 +39,10 @@ export default {
       )
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
       const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+      if (distance < 0) {
+        this.$emit('timeup')
+        return `00:00:00`
+      }
       return `${String(hours).padStart(2, 0)}:${String(minutes).padStart(
         2,
         0

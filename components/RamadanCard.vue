@@ -17,13 +17,20 @@
 </template>
 
 <script>
+import { getTime } from '../util/helpers'
 export default {
   props: {
     time: {
-      type: String
+      type: String,
+      default() {
+        return getTime(new Date())
+      }
     },
     title: {
-      type: String
+      type: String,
+      default() {
+        return ''
+      }
     }
   }
 }

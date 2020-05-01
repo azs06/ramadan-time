@@ -1,82 +1,88 @@
 <template>
-  <b-container class="flex-column mt-4">
-    <b-row class="mb-4 justify-content-center">
-      <b-col class="text-center" cols="12" sm="4">
-        <b-form-select
-          v-model="selectedDistrict"
-          :options="districts"
-          value-field="district"
-          text-field="bengali"
-          class="mb-4"
-          @change="onChangeDistrict"
-        ></b-form-select>
-        <TimeComponent class="font-bold" />
-      </b-col>
-    </b-row>
-    <b-row class="mb-4 justify-content-center">
-      <b-col class="justify-content-center">
-        <div class="ramadan-cards">
-          <b-overlay :show="isLoading" rounded="sm">
+  <b-overlay :show="isLoading" rounded="sm" opacity="0.8">
+    <b-container class="flex-column mt-4">
+      <b-row class="mb-4 justify-content-center">
+        <b-col class="text-center" cols="12" sm="4">
+          <b-form-select
+            v-model="selectedDistrict"
+            :options="districts"
+            value-field="district"
+            text-field="bengali"
+            class="mb-4"
+            @change="onChangeDistrict"
+          ></b-form-select>
+          <TimeComponent class="font-bold" />
+        </b-col>
+      </b-row>
+      <b-row class="mb-4 justify-content-center">
+        <b-col class="justify-content-center">
+          <div class="ramadan-cards">
             <RamadanCard
               :title="seheriLabel"
               :time="seheriTime"
               class="ramadan-card--seheri"
             >
-              <CountDownTimer :destination-time="seheriTimerDateTime" />
+              <CountDownTimer
+                :destination-time="seheriTimerDateTime"
+                @timeup="initTodaysRamadanData"
+              />
             </RamadanCard>
-          </b-overlay>
-          <b-overlay :show="isLoading" rounded="sm">
             <RamadanCard
               :title="iftarLabel"
               :time="iftarTime"
               class="ramadan-card--iftar"
             >
-              <CountDownTimer :destination-time="iftarDateTime" />
+              <CountDownTimer
+                :destination-time="iftarDateTime"
+                @timeup="initTodaysRamadanData"
+              />
             </RamadanCard>
-          </b-overlay>
-        </div>
-      </b-col>
-    </b-row>
-    <b-row class="justify-content-center text-center">
-      <b-col>
-        <h3 class="pb-2">রমজানের ইফতারি ও সাহ্‌রির সময় সূচি</h3>
-        <div class="pb-4 table-filter">
-          <b-badge
-            href="#"
-            :variant="selectedCalender === 'rahmat' ? 'primary' : 'secondary'"
-            @click.prevent="setCalender('rahmat')"
-            >রহমত</b-badge
-          >
-          <b-badge
-            href="#"
-            :variant="selectedCalender === 'magfirat' ? 'primary' : 'secondary'"
-            @click.prevent="setCalender('magfirat')"
-            >মাগফিরাত</b-badge
-          >
-          <b-badge
-            href="#"
-            :variant="selectedCalender === 'nazat' ? 'primary' : 'secondary'"
-            @click.prevent="setCalender('nazat')"
-            >নাজাত</b-badge
-          >
-          <b-badge
-            href="#"
-            :variant="selectedCalender === '' ? 'primary' : 'secondary'"
-            @click.prevent="setCalender('')"
-            >সম্পূর্ণ সময়সূচী</b-badge
-          >
-        </div>
-        <div class="card">
-          <b-table
-            :items="calenderToDisplay"
-            stacked="md"
-            :fields="tableFields"
-            :tbody-tr-class="rowClass"
-          ></b-table>
-        </div>
-      </b-col>
-    </b-row>
-  </b-container>
+          </div>
+        </b-col>
+      </b-row>
+      <b-row class="justify-content-center text-center">
+        <b-col>
+          <h3 class="pb-2">রমজানের ইফতারি ও সাহ্‌রির সময় সূচি</h3>
+          <div class="pb-4 table-filter">
+            <b-badge
+              href="#"
+              :variant="selectedCalender === 'rahmat' ? 'primary' : 'secondary'"
+              @click.prevent="setCalender('rahmat')"
+              >রহমত</b-badge
+            >
+            <b-badge
+              href="#"
+              :variant="
+                selectedCalender === 'magfirat' ? 'primary' : 'secondary'
+              "
+              @click.prevent="setCalender('magfirat')"
+              >মাগফিরাত</b-badge
+            >
+            <b-badge
+              href="#"
+              :variant="selectedCalender === 'nazat' ? 'primary' : 'secondary'"
+              @click.prevent="setCalender('nazat')"
+              >নাজাত</b-badge
+            >
+            <b-badge
+              href="#"
+              :variant="selectedCalender === '' ? 'primary' : 'secondary'"
+              @click.prevent="setCalender('')"
+              >সম্পূর্ণ সময়সূচী</b-badge
+            >
+          </div>
+          <div class="card">
+            <b-table
+              :items="calenderToDisplay"
+              stacked="md"
+              :fields="tableFields"
+              :tbody-tr-class="rowClass"
+            ></b-table>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
+  </b-overlay>
 </template>
 
 <script>
@@ -177,18 +183,26 @@ export default {
     }
   },
   created() {
-    this.isLoading = true
-    this.initRamadanTime().then(() => {
-      this.initDistricts()
-      this.initTodaysRamadanTime()
-      this.$nextTick(() => {
-        this.initSeheriTime()
-        this.initIftarTime()
-        this.isLoading = false
-      })
-    })
+    this.init()
   },
   methods: {
+    init() {
+      this.isLoading = true
+      setTimeout(() => {
+        this.initRamadanTime().then(() => {
+          this.initDistricts()
+          this.initTodaysRamadanData().then(() => {
+            this.isLoading = false
+          })
+        })
+      }, 500)
+    },
+    initTodaysRamadanData() {
+      this.initTodaysRamadanTime()
+      return this.$nextTick().then(() => {
+        return Promise.all([this.initSeheriTime(), this.initIftarTime()])
+      })
+    },
     initRamadanTime() {
       return GetSheetDone.labeledCols(this.sheetId).then((sheet) => {
         this.ramadanTime = sheet.data
@@ -268,9 +282,6 @@ export default {
         this.iftarLabel = 'আজকে ইফতার'
       }
     },
-    isEven(num) {
-      return num % 2 === 0
-    },
     isActiveDate(date) {
       if (!this.todaysRamadanTime) return false
       return this.todaysRamadanTime.date === date
@@ -279,15 +290,8 @@ export default {
       this.selectedCalender = type
     },
     rowClass(item) {
-      const itemIndex = this.ramadanTime.findIndex((ramadanObject) => {
-        return ramadanObject.date === item.date
-      })
-
       if (this.isActiveDate(item.date)) {
         return 'active'
-      }
-      if (this.isEven(itemIndex)) {
-        return 'table-secondary'
       }
       return ''
     },
@@ -303,10 +307,7 @@ export default {
           .format('LT')
         return objectToUpdate
       })
-      this.initRamadanTime()
-      this.initTodaysRamadanTime()
-      this.initSeheriTime()
-      this.initIftarTime()
+      this.initTodaysRamadanData()
     }
   }
 }

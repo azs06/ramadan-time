@@ -43,6 +43,9 @@ table .active {
     &--iftar{
         background-image: url('/wi-sunset.svg');
     }
+    .card-body{
+        min-height: 1.54rem;
+    }
 }
 
 .under-header-content{
