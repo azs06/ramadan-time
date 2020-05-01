@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { getFormmatedTimeString } from '../util/helpers'
 export default {
   props: {
     destinationTime: {
@@ -19,7 +20,7 @@ export default {
   },
   created() {
     const interval = setInterval(() => {
-      this.countDownTimer = this.initCountDownTimer()
+      this.countDownTimer = getFormmatedTimeString(this.initCountDownTimer())
     }, 1000)
     this.$once('hook:beforeDestroy', () => {
       clearInterval(interval)

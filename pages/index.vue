@@ -28,7 +28,7 @@
           <div class="ramadan-cards">
             <RamadanCard
               :title="seheriLabel"
-              :time="seheriTime"
+              :time="getFormattedTime(seheriTime)"
               class="ramadan-card--seheri"
             >
               <CountDownTimer
@@ -38,7 +38,7 @@
             </RamadanCard>
             <RamadanCard
               :title="iftarLabel"
-              :time="iftarTime"
+              :time="getFormattedTime(iftarTime)"
               class="ramadan-card--iftar"
             >
               <CountDownTimer
@@ -82,7 +82,7 @@
           </div>
           <div class="card">
             <b-table
-              :items="calenderToDisplay"
+              :items="formattedCalendar"
               stacked="md"
               :fields="tableFields"
               :tbody-tr-class="rowClass"
@@ -97,6 +97,12 @@
 <script>
 import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
 import moment from 'moment'
+import {
+  daysOfTheWeekBengali,
+  getFormattedTime,
+  getFormattedDate,
+  getFormattedNumber
+} from '../util/helpers'
 import TimeComponent from '@/components/TimeComponent'
 import RamadanCard from '@/components/RamadanCard'
 import CountDownTimer from '@/components/CountDownTimer'
@@ -192,6 +198,22 @@ export default {
         )
       }
       return Object.create(null)
+    },
+    formattedCalendar() {
+      return this.calenderToDisplay.map((dayObject) => {
+        const objectToUpdate = JSON.parse(JSON.stringify(dayObject))
+        objectToUpdate.iftar = getFormattedTime(objectToUpdate.iftar)
+        objectToUpdate.suhoor = getFormattedTime(objectToUpdate.suhoor)
+        objectToUpdate.day = daysOfTheWeekBengali(
+          objectToUpdate.day.toLowerCase()
+        )
+        objectToUpdate.date = getFormattedDate(objectToUpdate.date)
+        // to determine active date
+        objectToUpdate.englishDate = dayObject.date
+        objectToUpdate.ramadan = getFormattedNumber(objectToUpdate.ramadan)
+        objectToUpdate.fajr = getFormattedTime(objectToUpdate.fajr)
+        return objectToUpdate
+      })
     }
   },
   created() {
@@ -304,7 +326,7 @@ export default {
       this.selectedCalender = type
     },
     rowClass(item) {
-      if (this.isActiveDate(item.date)) {
+      if (this.isActiveDate(item.englishDate)) {
         return 'active'
       }
       return ''
@@ -326,7 +348,8 @@ export default {
         return objectToUpdate
       })
       this.initTodaysRamadanData()
-    }
+    },
+    getFormattedTime
   }
 }
 </script>
