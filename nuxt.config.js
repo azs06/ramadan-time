@@ -14,11 +14,11 @@ export default {
         content: process.env.npm_package_description || ''
       },
       { name: 'author', content: 'ramadan.surge.sh' },
-      { name: 'og:image', content: 'calendar.png' },
+      { name: 'og:image', content: 'icon.png' },
       { name: 'og:image:type', content: 'image/png/jpg' },
       { name: 'og:description', content: 'Ramadan Calendar Bangladesh' }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/calendar.png' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }]
   },
   /*
    ** Customize the progress-bar color
@@ -47,7 +47,7 @@ export default {
     'bootstrap-vue/nuxt',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv'
   ],
