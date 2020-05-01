@@ -4,7 +4,11 @@
       <div class="under-header-content bg-primary">
         <h3>রমজানের সময়সূচী ২০২০(হিজরি ১৪৪১)</h3>
       </div>
-      <nuxt />
+      <nuxt class="content mb-4" />
+      <footer class="footer text-center">
+        &copy;
+        <a href="http://reformedtech.org" target="_blank">ReformedTech</a> 2020
+      </footer>
     </div>
   </main>
 </template>

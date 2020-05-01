@@ -25,27 +25,31 @@
       </b-row>
       <b-row class="mb-4 justify-content-center">
         <b-col class="justify-content-center">
-          <div class="ramadan-cards">
-            <RamadanCard
-              :title="seheriLabel"
-              :time="getFormattedTime(seheriTime)"
-              class="ramadan-card--seheri"
-            >
-              <CountDownTimer
-                :destination-time="seheriTimerDateTime"
-                @timeup="initTodaysRamadanData"
-              />
-            </RamadanCard>
-            <RamadanCard
-              :title="iftarLabel"
-              :time="getFormattedTime(iftarTime)"
-              class="ramadan-card--iftar"
-            >
-              <CountDownTimer
-                :destination-time="iftartTimerDateTime"
-                @timeup="initTodaysRamadanData"
-              />
-            </RamadanCard>
+          <div class="ramadan-cards row">
+            <div class="col-sm-4">
+              <RamadanCard
+                :title="seheriLabel"
+                :time="getFormattedTime(seheriTime)"
+                class="ramadan-card--seheri"
+              >
+                <CountDownTimer
+                  :destination-time="seheriTimerDateTime"
+                  @timeup="initTodaysRamadanData"
+                />
+              </RamadanCard>
+            </div>
+            <div class="col-sm-4">
+              <RamadanCard
+                :title="iftarLabel"
+                :time="getFormattedTime(iftarTime)"
+                class="ramadan-card--iftar"
+              >
+                <CountDownTimer
+                  :destination-time="iftartTimerDateTime"
+                  @timeup="initTodaysRamadanData"
+                />
+              </RamadanCard>
+            </div>
           </div>
         </b-col>
       </b-row>
