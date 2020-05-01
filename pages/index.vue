@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="isLoading" rounded="sm" opacity="0.8">
-    <b-container class="flex-column mt-4">
+    <b-container class="flex-column pt-5">
       <b-row class="mb-4 justify-content-center">
         <b-col class="text-center" cols="12" sm="4">
           <b-form-select
@@ -11,6 +11,7 @@
             class="mb-4"
             @change="onChangeDistrict"
           ></b-form-select>
+          {{ cardHeader }}
           <TimeComponent class="font-bold" />
         </b-col>
       </b-row>
@@ -33,7 +34,7 @@
               class="ramadan-card--iftar"
             >
               <CountDownTimer
-                :destination-time="iftarDateTime"
+                :destination-time="iftartTimerDateTime"
                 @timeup="initTodaysRamadanData"
               />
             </RamadanCard>
@@ -134,7 +135,8 @@ export default {
       selectedDistrict: 'Dhaka District',
       sheetId: '1VueNvU-ipyjDhvKsU19nNlHkz70k6i5u5Rlnyz-TmE8',
       isLoading: false,
-      seheriTimerDateTime: ''
+      seheriTimerDateTime: '',
+      iftartTimerDateTime: ''
     }
   },
   computed: {
@@ -250,16 +252,14 @@ export default {
         const { suhoor } = tomorrowsRamadanTime
         this.seheriTime = suhoor
         this.seheriTimerDateTime = `${tomorrow.toLocaleDateString(
-          'en-US'
+          'en'
         )} ${suhoor}`
         this.seheriLabel = 'আগামীকাল সাহ্‌রি'
       } else {
         const todaysRamadanTime = this.getRamadanTime(today)
         const { suhoor } = todaysRamadanTime
         this.seheriTime = suhoor
-        this.seheriTimerDateTime = `${today.toLocaleDateString(
-          'en-US'
-        )} ${suhoor}`
+        this.seheriTimerDateTime = `${today.toLocaleDateString('en')} ${suhoor}`
         this.seheriLabel = 'আজকে সাহ্‌রি'
       }
     },
@@ -274,11 +274,15 @@ export default {
         const tomorrowsRamadanTime = this.getRamadanTime(tomorrow)
         const { iftar } = tomorrowsRamadanTime
         this.iftarTime = iftar
+        this.iftartTimerDateTime = `${tomorrow.toLocaleDateString(
+          'en'
+        )} ${iftar}`
         this.iftarLabel = 'আগামীকাল ইফতার'
       } else {
         const todaysRamadanTime = this.getRamadanTime(today)
         const { iftar } = todaysRamadanTime
         this.iftarTime = iftar
+        this.iftartTimerDateTime = `${today.toLocaleDateString('en')} ${iftar}`
         this.iftarLabel = 'আজকে ইফতার'
       }
     },
@@ -300,6 +304,9 @@ export default {
       this.ramadanTime = this.ramadanTime.map((ramadanObject) => {
         const objectToUpdate = JSON.parse(JSON.stringify(ramadanObject))
         objectToUpdate.suhoor = moment(ramadanObject.suhoor, 'h:mm:ss A')
+          .add(Number(suhoor), 'minutes')
+          .format('LT')
+        objectToUpdate.fajr = moment(ramadanObject.fajr, 'h:mm:ss A')
           .add(Number(suhoor), 'minutes')
           .format('LT')
         objectToUpdate.iftar = moment(ramadanObject.iftar, 'h:mm:ss A')
