@@ -11,8 +11,16 @@
             class="mb-4"
             @change="onChangeDistrict"
           ></b-form-select>
-          {{ cardHeader }}
-          <TimeComponent class="font-bold" />
+          <b-card
+            border-variant="primary"
+            header-bg-variant="primary"
+            :header="cardHeader"
+            header-text-variant="white"
+          >
+            <b-card-text>
+              <TimeComponent class="font-bold" />
+            </b-card-text>
+          </b-card>
         </b-col>
       </b-row>
       <b-row class="mb-4 justify-content-center">
