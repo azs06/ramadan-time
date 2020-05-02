@@ -220,20 +220,16 @@ export default {
       })
     }
   },
-  created() {
-    this.init()
+  async created() {
+    this.isLoading = true
+    await this.init()
+    this.isLoading = false
   },
   methods: {
-    init() {
-      this.isLoading = true
-      setTimeout(() => {
-        this.initRamadanTime().then(() => {
-          this.initDistricts()
-          this.initTodaysRamadanData().then(() => {
-            this.isLoading = false
-          })
-        })
-      }, 500)
+    async init() {
+      await this.initRamadanTime()
+      await this.initDistricts()
+      await this.initTodaysRamadanData()
     },
     initTodaysRamadanData() {
       this.initTodaysRamadanTime()
@@ -244,6 +240,7 @@ export default {
     initRamadanTime() {
       return GetSheetDone.labeledCols(this.sheetId).then((sheet) => {
         this.ramadanTime = sheet.data
+        localStorage.setItem('ramadanTime', JSON.stringify(sheet.data))
       })
     },
     initDistricts() {
@@ -337,6 +334,12 @@ export default {
     },
     onChangeDistrict(value) {
       localStorage.setItem('selectedDistrict', value)
+      if (value.includes('Dhaka')) {
+        const ramadanTime = JSON.parse(localStorage.getItem('ramadanTime'))
+        this.ramadanTime = ramadanTime
+        this.initTodaysRamadanData()
+        return
+      }
       const { suhoor, iftar } = this.selectedDistrictData
       this.ramadanTime = this.ramadanTime.map((ramadanObject) => {
         const objectToUpdate = JSON.parse(JSON.stringify(ramadanObject))
