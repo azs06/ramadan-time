@@ -125,7 +125,7 @@ export default {
       todaysRamadanTime: null,
       seheriLabel: '',
       iftarLabel: '',
-      selectedCalender: 'rahmat',
+      selectedCalender: 'magfirat',
       displayType: 'card',
       tableFields: [
         {
