@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
+// import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
 import moment from 'moment'
 import {
   daysOfTheWeekBengali,
@@ -110,6 +110,7 @@ import {
 import TimeComponent from '@/components/TimeComponent'
 import RamadanCard from '@/components/RamadanCard'
 import CountDownTimer from '@/components/CountDownTimer'
+import { fetchSheetData } from '@/services/googleSheets'
 export default {
   name: 'IndexPage',
   components: {
@@ -238,14 +239,25 @@ export default {
       })
     },
     initRamadanTime() {
-      return GetSheetDone.labeledCols(this.sheetId).then((sheet) => {
-        this.ramadanTime = sheet.data
-        localStorage.setItem('ramadanTime', JSON.stringify(sheet.data))
-      })
+      return fetchSheetData(this.sheetId, 'Calender', process.env.API_KEY).then(
+        (data) => {
+          const labels = data.values.splice(0, 1)[0]
+          this.ramadanTime = this.parseArrayValue(data.values, labels)
+          localStorage.setItem('ramadanTime', JSON.stringify(data.values))
+        }
+      )
     },
     initDistricts() {
-      return GetSheetDone.labeledCols(this.sheetId, 2).then((sheet) => {
-        this.districts = sheet.data
+      return fetchSheetData(
+        this.sheetId,
+        'Zilla_Calender',
+        process.env.API_KEY
+      ).then((data) => {
+        // console.log(data)
+        this.districts = this.parseArrayValue(
+          data.values.slice(1),
+          data.values[0]
+        )
       })
     },
     initTodaysRamadanTime() {
@@ -355,6 +367,15 @@ export default {
         return objectToUpdate
       })
       this.initTodaysRamadanData()
+    },
+    parseArrayValue(arrayOfValues, labels) {
+      return arrayOfValues.map((value) => {
+        return value.reduce((acc, curr, index) => {
+          const label = labels[index].trim().toLowerCase()
+          acc[label] = curr
+          return acc
+        }, {})
+      })
     },
     getFormattedTime
   }
