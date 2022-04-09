@@ -1,7 +1,7 @@
 {
   "name": "ramadan-time",
   "version": "1.0.0",
-  "description": "Ramadan Time Bangladesh 2020",
+  "description": "Ramadan Time Bangladesh",
   "author": "Md.Atiquzzaman Soikat",
   "private": true,
   "scripts": {
@@ -24,7 +24,6 @@
     "bootstrap-vue": "^2.0.0",
     "date-fns": "^2.12.0",
     "dotenv": "^8.2.0",
-    "get-sheet-done": "^0.1.5",
     "moment": "^2.24.0",
     "nuxt": "^2.0.0"
   },

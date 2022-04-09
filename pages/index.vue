@@ -99,7 +99,6 @@
 </template>
 
 <script>
-// import GetSheetDone from 'get-sheet-done/dist/GetSheetDone'
 import moment from 'moment'
 import {
   daysOfTheWeekBengali,
