@@ -1,6 +1,6 @@
 # ramadan-time
 
-> Ramadan Time Bangladesh 2020
+> Ramadan Time Bangladesh
 
 ## Build Setup
 
