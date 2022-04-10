@@ -1,0 +1,36 @@
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+          node-version: 14
+
+    - name: Remove package-lock.json
+      uses: JesseTG/rm@v1.0.2
+      with:
+        path: package-lock.json          
+
+    - name: Install Packages
+      run: npm install # Install Dependencies
+
+    - name: Setup env
+      run: export API_KEY=${{SHEETS_API_KEY}}  
+
+    - name: Build
+      run: npm run build    
+
+    - name: Install Surge
+      run: npm install -g surge
+
+    - name: Deploy to Surge
+      run:  surge ./dist ramadan.surge.sh --token ${{secrets.SURGE_TOKEN}}
