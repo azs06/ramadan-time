@@ -220,6 +220,24 @@ export default {
       })
     }
   },
+  watch: {
+    todaysRamadanTime: {
+      handler(value) {
+        if (value && value.ramadan) {
+          const ramadan = value.ramadan
+          if (ramadan <= 10) {
+            this.selectedCalender = 'rahmat'
+          } else if (ramadan <= 20 && ramadan > 10) {
+            this.selectedCalender = 'magfirat'
+          } else {
+            this.selectedCalender = 'nazat'
+          }
+        }
+      },
+      deep: true,
+      init: true
+    }
+  },
   async created() {
     this.isLoading = true
     await this.init()
