@@ -24,7 +24,7 @@ jobs:
       run: npm install # Install Dependencies
 
     - name: Setup env
-      run: export API_KEY=${{SHEETS_API_KEY}}  
+      run: export API_KEY=${{secrets.SHEETS_API_KEY}}  
 
     - name: Build
       run: npm run build    
