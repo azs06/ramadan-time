@@ -26,7 +26,8 @@ jobs:
     - name: Create env file
       run: |
         touch .env
-        echo API_KEY=${{ secrets.API_KEY }} >> .env 
+        echo API_KEY=${{ secrets.API_KEY }} >> .env
+        cat .env 
 
     - name: Build
       run: npm run build    
