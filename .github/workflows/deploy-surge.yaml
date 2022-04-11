@@ -23,9 +23,10 @@ jobs:
     - name: Install Packages
       run: npm install # Install Dependencies
 
-    - name: Setup env
-      run: echo "::set-env API_KEY=${{secrets.SHEETS_API_KEY}}"
-      #export API_KEY=${{secrets.SHEETS_API_KEY}}  
+    - name: Create env file
+      run: |
+        touch .env
+        echo "::set-env API_KEY=${{secrets.SHEETS_API_KEY}}" >> .env  
 
     - name: Build
       run: npm run build    
