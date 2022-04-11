@@ -36,4 +36,4 @@ jobs:
       run: npm install -g surge
 
     - name: Deploy to Surge
-      run:  surge ./dist ramadan.surge.sh --token ${{secrets.SURGE_TOKEN}}
+      run:  surge ./dist ramadan-time.surge.sh --token ${{secrets.SURGE_TOKEN}}
